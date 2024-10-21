@@ -28,14 +28,6 @@ MPU6050 mpu(Wire);
 // APDS9960 register addresses
 #define APDS9960_REG_ENABLE 0x80
 #define APDS9960_REG_PDATA 0x9C
-#define APDS9960_REG_CDATAL 0x94
-#define APDS9960_REG_CDATAH 0x95
-#define APDS9960_REG_RDATAL 0x96
-#define APDS9960_REG_RDATAH 0x97
-#define APDS9960_REG_GDATAL 0x98
-#define APDS9960_REG_GDATAH 0x99
-#define APDS9960_REG_BDATAL 0x9A
-#define APDS9960_REG_BDATAH 0x9B
 #define APDS9960_REG_CONFIG2 0x90
 #define APDS9960_REG_CONFIG3 0x9F
 #define APDS9960_REG_CONTROL 0x8F
@@ -55,10 +47,6 @@ volatile int lastEncoded = 0;
 String heading[] = {"N", "E", "S", "W"};
 
 int HEADING = 0;
-// 0 = North
-// 1 = East
-// 2 = South
-// 3 = West
 
 int GLOBAL_X = 0;
 int GLOBAL_Y = 0;
@@ -74,11 +62,6 @@ int fl = 0;
 int fr = 0;
 int dl = 0;
 int dr = 0;
-
-int c = 0;
-int r = 0;
-int g = 0;
-int b = 0;
 
 float fl_filtered = 0;
 float fr_filtered = 0;

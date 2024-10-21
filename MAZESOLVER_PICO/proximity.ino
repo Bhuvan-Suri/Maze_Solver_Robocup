@@ -44,31 +44,19 @@ int readProximity(uint8_t channel)
   int proximity = (proximityData[1] << 8) | proximityData[0];
   return proximity;
 }
+
 void initAPDS(uint8_t channel)
 {
   TCA9548A(channel);
   delay(20);
-  writeRegister(APDS9960_REG_ENABLE, (0 << 6) | (1 << 5) | (0 << 4) | (0 << 3) | (1 << 2) | (0 << 1) | 1); 
-  // Bit 6 to 0 Disable Gesture
-  // Bit 5 to 1 Enable Proximity Interrupt
-  // Bit 4 to 0 Disable ALS Interrupt
-  // Bit 3 to 0 Disable Wait Enable
-  // Bit 2 to 1 Enable Proximity
-  // Bit 1 to 0 Disable ALS Power 
-  // Bit 0 to 1 Enable Proximity Power
+  writeRegister(APDS9960_REG_ENABLE, (0 << 6) | (1 << 5) | (0 << 4) | (0 << 3) | (1 << 2) | (0 << 1) | 1);
   writeRegister(APDS9960_REG_CONFIG2, (0 << 7) | (0 << 6) | (0x03 << 4) | 1);
-  // Bit 7 to 0 Disable Proximity Saturation Interrupt
-  // Bit 6 to 0 Disable Diode Saturation Interrupt
-  // Bit 4 to 0x03 Sets Proximity LED Boost to 300%
-  // Bit 0 to 1 Reserved must be set to 1
   // writeRegister(APDS9960_REG_CONFIG3, (0 << 5) | (0 << 3) | (0 << 2) | (0 << 1) | (0 << 0));
   writeRegister(APDS9960_REG_CONTROL, (0x00 << 6) | (0x03 << 2) | 0x01);
   // writeRegister(APDS9960_REG_COUNTR, (0x00 << 6));
-  // Bit 6 to 0x00 Sets LED Current to 100 Mah
-  // Bit 2 to 0x03 Sets Proximity Gain to 8x
-  // Bit 0 to 0x01 Sets ALS Gain to 44x
   delay(50);
 }
+
 int detectTurn(bool currDL, bool currDR)
 {
   if (currDL != prevWallLeft)

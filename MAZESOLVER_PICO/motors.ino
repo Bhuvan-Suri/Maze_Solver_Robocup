@@ -221,13 +221,53 @@ void moveStraightAlignedToDistanceForCurve(float _distance)
 {
   resetEncoder();
   mpu.resetAngleZ();
-  moveStraightAlignedToDistance(_distance, false, false);
+  while (true)
+  {
+    mpu.update();
+    updateProximitySensors();
+    float _len = mapFloat((float)encoderPos, 0, 57, 0, 10);
+    float gyroerror = mpu.getAngleZ() * kp_gyroAssist;
+    if (_len > _distance)
+      break;
+    moveMotor((int)(BASESPEED_move + gyroerror), (int)(BASESPEED_move - gyroerror));
+  }
 }
 
 void moveStraightAlignedToDistance(float _distance, bool wasRunning, bool _stopAtFrontWall)
 {
   resetEncoder();
-  while(encoderPos != _distance*16.2){
-    moveStraightAligned();
+  mpu.resetAngleZ();
+  float p_move_distance = 0;
+  float d_move_distance = 0;
+  float pe_move_distance = 0;
+  if (!wasRunning)
+  {
+    for (int i = 0; i < MAXSPEED_move_distance; i++)
+    {
+      moveMotor(i, i);
+      delayMicroseconds(1400);
+    }
   }
+  while (true)
+  {
+    mpu.update();
+    updateProximitySensors();
+    float _len = mapFloat((float)encoderPos, 0, 57, 0, 10);
+    float error = _distance - _len;
+    float gyroerror = mpu.getAngleZ() * kp_gyroAssist;
+    float ce_move_distance = error - pe_move_distance;
+    pe_move_distance = error;
+    p_move_distance = error * kp_move_distance;
+    d_move_distance = ce_move_distance * kd_move_distance;
+    float drive = p_move_distance + d_move_distance;
+    drive = constrain(drive, MINSPEED_move_distance, MAXSPEED_move_distance);
+    moveMotor((int)(drive + gyroerror), (int)(drive - gyroerror));
+    if (error <= 0)
+    {
+      _beep();
+      break;
+    }
+  }
+  moveMotor(0, 0);
+  delay(30);
 }

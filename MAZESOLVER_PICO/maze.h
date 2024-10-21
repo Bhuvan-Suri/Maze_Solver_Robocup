@@ -9,14 +9,35 @@ int startY = 0;
 int finishX = 7;
 int finishY = 7;
 
-struct tile
+enum wallState
 {
-  bool nWall = false;
-  bool eWall = false;
-  bool sWall = false;
-  bool wWall = false;
+  DONTKNOW,
+  OPEN,
+  CLOSE,
+  VIRTUAL
 };
 
+struct node
+{
+  wallState NORTH = DONTKNOW, EAST = DONTKNOW, SOUTH = DONTKNOW, WEST = DONTKNOW;
+  bool visited = false;
+};
+
+/* for flood fill algorithm*/
+node MAZE_FLOOD[MAZE_SIZE_X][MAZE_SIZE_Y];
+
+/* for DFS algorithm*/
+node MAZE_DFS[200];
 
 
-tile* maze[30][30];
+void resetMaze()
+{
+  for (int i = 0; i < MAZE_SIZE_X; i++)
+  {
+    for (int j = 0; j < MAZE_SIZE_Y; j++)
+    {
+      MAZE_FLOOD[i][j].visited = false;
+    }
+  }
+}
+
