@@ -3,8 +3,8 @@
 Adafruit_APDS9960 apds;
 
 #define f_C 1
-#define r_C 1
-#define l_C 1
+#define r_C 2
+#define l_C 3
 
 const float alpha = 0.65;
 
