@@ -32,11 +32,19 @@ void setup() {
 
   mpu.calcOffsets(true, true);  // gyro and accel
   mpu.resetAngleZ();
-/* Initializes all proximity sensors */
-  initAPDS(FL);
-  initAPDS(DL);
-  initAPDS(FR);
-  initAPDS(DR);
+  while(1){
+    // updateProximitySensors();
+    // printWalldata();
+    mpu.update();
+    Serial.println(mpu.getAngleZ(),DEC);
+    if (BOOTSEL) mpu.resetAngleZ();
+    delay(100);
+  }
+  /* Initializes all proximity sensors */
+  // initAPDS(FL);
+  // initAPDS(DL);
+  // initAPDS(FR);
+  // initAPDS(DR);
 
   delay(100);
 
@@ -65,11 +73,6 @@ void setup() {
   /* Run main algorithm
   Note: function is blocking*/
   solveMaze();
-  for(int i = 0; i < 30; i++){
-    for(int i2 = 0; i < 30; i++){
-      delete maze[i,i2];
-    }
-  }
 
   /* indicate finish state by blinking both leds continously. */
   while (1) {

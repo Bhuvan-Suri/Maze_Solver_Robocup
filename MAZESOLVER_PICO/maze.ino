@@ -279,15 +279,9 @@ void wallFollow(int wallToFollow)
 
 void dfs() // TODO
 {
-  int currentPos[2];
-  currentPos[0] = 0;
-  currentPos[1] = 0;
-  for(int i = 0; i<30; i++){
-    for(int i2 = 0; i<30; i++){
-    maze[i][i2] = new tile;
+    while (1)
+    {
     }
-  }f
-
 }
 
 void floodFill() // TODO
