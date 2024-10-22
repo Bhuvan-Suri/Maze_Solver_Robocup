@@ -58,13 +58,11 @@ int pe_move = 0;
 bool prevWallLeft = false;
 bool prevWallRight = false;
 
-int fl = 0;
-int fr = 0;
+int fm = 0;
 int dl = 0;
 int dr = 0;
 
-float fl_filtered = 0;
-float fr_filtered = 0;
+float fm_filtered = 0;
 float dl_filtered = 0;
 float dr_filtered = 0;
 

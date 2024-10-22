@@ -2,7 +2,6 @@
 #include "Adafruit_APDS9960.h"
 Adafruit_APDS9960 apds;
 
-#define f_C 1
 #define r_C 2
 #define l_C 3
 

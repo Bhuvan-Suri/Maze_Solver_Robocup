@@ -32,19 +32,12 @@ void setup() {
 
   mpu.calcOffsets(true, true);  // gyro and accel
   mpu.resetAngleZ();
-  while(1){
-    // updateProximitySensors();
-    // printWalldata();
-    mpu.update();
-    Serial.println(mpu.getAngleZ(),DEC);
-    if (BOOTSEL) mpu.resetAngleZ();
-    delay(100);
-  }
-  /* Initializes all proximity sensors */
-  // initAPDS(FL);
-  // initAPDS(DL);
-  // initAPDS(FR);
-  // initAPDS(DR);
+  
+  /* Initializes all APDS9960 sensors */
+  initAPDS(FM);
+  initAPDS(DL);
+  initAPDS(DR);
+  initColorSensors();
 
   delay(100);
 

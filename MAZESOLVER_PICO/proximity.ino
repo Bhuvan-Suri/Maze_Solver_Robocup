@@ -6,54 +6,54 @@ void beginWire()
   Wire.setClock(400000);
 }
 
-void TCA9548A(uint8_t bus)
+void wire1_TCA9548A(uint8_t bus)
 {
-  Wire.beginTransmission(0x70); // TCA9548A address is 0x70
-  Wire.write(1 << bus);         // send byte to select bus
-  Wire.endTransmission();
+  Wire1.beginTransmission(0x70); // TCA9548A address is 0x70
+  Wire1.write(1 << bus);         // send byte to select bus
+  Wire1.endTransmission();
 }
 
-void writeRegister(uint8_t reg, uint8_t value)
+void wire1_writeRegister(uint8_t reg, uint8_t value)
 {
-  Wire.beginTransmission(APDS9960_ADDRESS);
-  Wire.write(reg);
-  Wire.write(value);
-  Wire.endTransmission();
+  Wire1.beginTransmission(APDS9960_ADDRESS);
+  Wire1.write(reg);
+  Wire1.write(value);
+  Wire1.endTransmission();
 }
 
-uint8_t *readRegister(uint8_t reg, uint8_t len)
+uint8_t *wire1_readRegister(uint8_t reg, uint8_t len)
 {
   static uint8_t data[5]; // Assuming len is always <= 3
-  Wire.beginTransmission(APDS9960_ADDRESS);
-  Wire.write(reg);
-  Wire.endTransmission();
+  Wire1.beginTransmission(APDS9960_ADDRESS);
+  Wire1.write(reg);
+  Wire1.endTransmission();
 
-  Wire.requestFrom(APDS9960_ADDRESS, len);
-  while (Wire.available() < len)
+  Wire1.requestFrom(APDS9960_ADDRESS, len);
+  while (Wire1.available() < len)
     ;
 
   for (uint8_t i = 0; i < len; i++)
-    data[i] = Wire.read();
+    data[i] = Wire1.read();
   return data;
 }
 
 int readProximity(uint8_t channel)
 {
-  TCA9548A(channel);
-  uint8_t *proximityData = readRegister(APDS9960_REG_PDATA, 2);
+  wire1_TCA9548A(channel);
+  uint8_t *proximityData = wire1_readRegister(APDS9960_REG_PDATA, 2);
   int proximity = (proximityData[1] << 8) | proximityData[0];
   return proximity;
 }
 
 void initAPDS(uint8_t channel)
 {
-  TCA9548A(channel);
+  wire1_TCA9548A(channel);
   delay(20);
-  writeRegister(APDS9960_REG_ENABLE, (0 << 6) | (1 << 5) | (0 << 4) | (0 << 3) | (1 << 2) | (0 << 1) | 1);
-  writeRegister(APDS9960_REG_CONFIG2, (0 << 7) | (0 << 6) | (0x03 << 4) | 1);
-  // writeRegister(APDS9960_REG_CONFIG3, (0 << 5) | (0 << 3) | (0 << 2) | (0 << 1) | (0 << 0));
-  writeRegister(APDS9960_REG_CONTROL, (0x00 << 6) | (0x03 << 2) | 0x01);
-  // writeRegister(APDS9960_REG_COUNTR, (0x00 << 6));
+  wire1_writeRegister(APDS9960_REG_ENABLE, (0 << 6) | (1 << 5) | (0 << 4) | (0 << 3) | (1 << 2) | (0 << 1) | 1);
+  wire1_writeRegister(APDS9960_REG_CONFIG2, (0 << 7) | (0 << 6) | (0x03 << 4) | 1);
+  // wire1_writeRegister(APDS9960_REG_CONFIG3, (0 << 5) | (0 << 3) | (0 << 2) | (0 << 1) | (0 << 0));
+  wire1_writeRegister(APDS9960_REG_CONTROL, (0x00 << 6) | (0x03 << 2) | 0x01);
+  // wire1_writeRegister(APDS9960_REG_COUNTR, (0x00 << 6));
   delay(50);
 }
 
@@ -90,15 +90,14 @@ void updateWalls(bool _delay)
 
 void updateProximitySensors()
 {
-  fl = readProximity(FL);
-  fr = readProximity(FR);
+  fm = readProximity(FM);
   dl = readProximity(DL);
   dr = readProximity(DR);
 
   dl_filtered = alpha * dl_filtered + (1 - alpha) * dl;
   dr_filtered = alpha * dr_filtered + (1 - alpha) * dr;
-  fl_filtered = alpha * fl_filtered + (1 - alpha) * fl;
-  fr_filtered = alpha * fr_filtered + (1 - alpha) * fr;
+  fm_filtered = alpha * fm_filtered + (1 - alpha) * fm;
+
 }
 
 void delayWithSensorUpdate(int ms)

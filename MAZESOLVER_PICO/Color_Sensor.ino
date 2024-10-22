@@ -1,12 +1,12 @@
-void wire1_TCA9548A(uint8_t bus) {
-  Wire1.beginTransmission(0x70);  // TCA9548A address is 0x70
-  Wire1.write(1 << bus);          // send byte to select bus
-  Wire1.endTransmission();
+void TCA9548A(uint8_t bus) {
+  Wire.beginTransmission(0x70);  // TCA9548A address is 0x70
+  Wire.write(1 << bus);          // send byte to select bus
+  Wire.endTransmission();
 }
 
 void initColorSensor(bus){
   if (!apds.begin()) {
-    wire1_TCA9548A(bus);
+    TCA9548A(bus);
     SerialDebug.println("failed to initialize device! Please check your wiring.");
   } else SerialDebug.println("Device initialized!");
 
@@ -15,14 +15,13 @@ void initColorSensor(bus){
 }
 
 void initColorSensors(){
-  initColorSensor(f_C);
   initColorSensor(l_C);
   initColorSensor(r_C);
 }
 
 void readColorSensor(bus){
   //wait for color data to be ready
-  wire1_TCA9548A(bus)
+  TCA9548A(bus)
   while (!apds.colorDataReady()) {
     delay(5);
   }

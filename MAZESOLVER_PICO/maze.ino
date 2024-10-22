@@ -206,7 +206,7 @@ void wallFollow(int wallToFollow)
     int toTurn = 0;
     int turnMode = 0;
 
-    if ((fl + fr) / 2 > 30)
+    if (fm_filtered > 30)
     {
         turnMode = FRONTWALL;
         leftWall = (dl_filtered > WallSenseDuringTurn);

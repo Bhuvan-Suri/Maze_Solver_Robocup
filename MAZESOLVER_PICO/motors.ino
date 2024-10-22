@@ -4,10 +4,8 @@ void setMotorIOs()
   // Set motor OUTPUTs
   pinMode(LMF, OUTPUT);
   pinMode(LMR, OUTPUT);
-  pinMode(PWML, OUTPUT);
   pinMode(RMF, OUTPUT);
   pinMode(RMR, OUTPUT);
-  pinMode(PWMR, OUTPUT);
 
   // Set digital LOW to all OUTPUTs
   moveMotor(0, 0);
@@ -18,24 +16,17 @@ void setMotorIOs()
 void moveMotor(int inL, int inR)
 {
   inL = (float)inL * 0.985;
-  int leftpwm = abs(inL);
-  int rightpwm = abs(inR);
-
-  leftpwm = constrain(leftpwm, 0, 255);
-  rightpwm = constrain(rightpwm, 0, 255);
-
-  bool lmf = (inL > 0) ? 1 : 0;
-  bool lmr = (inL > 0) ? 0 : 1;
-  bool rmf = (inR > 0) ? 1 : 0;
-  bool rmr = (inR > 0) ? 0 : 1;
-
-  analogWrite(PWML, leftpwm);
-  digitalWrite(LMF, lmf);
-  digitalWrite(LMR, lmr);
-
-  analogWrite(PWMR, rightpwm);
-  digitalWrite(RMF, rmf);
-  digitalWrite(RMR, rmr);
+  inR = constrain(inR, -255, 255);
+  inL = constrain(inL, -255, 255);
+  if(inL > 0){
+    analogWrite(LMF, inL);
+  }else{
+    analogWrite(LMR, -inL);
+  }if(inR > 0){
+    analogWrite(RMF, inR);
+  }else{
+    analogWrite(RMR, -inR);
+  }
 }
 
 void testRotation()
@@ -237,37 +228,7 @@ void moveStraightAlignedToDistance(float _distance, bool wasRunning, bool _stopA
 {
   resetEncoder();
   mpu.resetAngleZ();
-  float p_move_distance = 0;
-  float d_move_distance = 0;
-  float pe_move_distance = 0;
-  if (!wasRunning)
-  {
-    for (int i = 0; i < MAXSPEED_move_distance; i++)
-    {
-      moveMotor(i, i);
-      delayMicroseconds(1400);
-    }
+  while(encoderPos != _distance*encoderToDistanceMultiplier){
+    moveMotor(maxSPEED_move,MAXSPEED_move);
   }
-  while (true)
-  {
-    mpu.update();
-    updateProximitySensors();
-    float _len = mapFloat((float)encoderPos, 0, 57, 0, 10);
-    float error = _distance - _len;
-    float gyroerror = mpu.getAngleZ() * kp_gyroAssist;
-    float ce_move_distance = error - pe_move_distance;
-    pe_move_distance = error;
-    p_move_distance = error * kp_move_distance;
-    d_move_distance = ce_move_distance * kd_move_distance;
-    float drive = p_move_distance + d_move_distance;
-    drive = constrain(drive, MINSPEED_move_distance, MAXSPEED_move_distance);
-    moveMotor((int)(drive + gyroerror), (int)(drive - gyroerror));
-    if (error <= 0)
-    {
-      _beep();
-      break;
-    }
-  }
-  moveMotor(0, 0);
-  delay(30);
 }

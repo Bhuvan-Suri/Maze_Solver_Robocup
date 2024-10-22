@@ -9,6 +9,8 @@ int startY = 0;
 int finishX = 7;
 int finishY = 7;
 
+char turnDirection = '0'
+
 enum wallState
 {
   DONTKNOW,
